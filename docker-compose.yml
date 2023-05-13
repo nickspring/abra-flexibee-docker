@@ -1,0 +1,20 @@
+---
+version: '3.9'
+services:
+  postgres:
+    image: postgres:13-alpine
+    restart: always
+    volumes:
+      - pgdata-flexibee:/var/lib/postgresql/data:rw
+    env_file: config.env
+  flexibee:
+    ports:
+        - "15434:5434"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    env_file: config.env
+volumes:
+  pgdata-flexibee: {}

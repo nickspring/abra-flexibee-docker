@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: flexibee
+  name: flexibee
+spec:
+  selector:
+    matchLabels:
+      app: flexibee
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flexibee
+    spec:
+      containers:
+        - name: flexibee
+          imagePullPolicy: Always
+          image: registry.${DOMAIN}/flexibee:latest
+          ports:
+            - containerPort: 5434
+          env:
+            - name: POSTGRES_FORCEHTTPS
+              value: "no"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_HOST
+              value: "postgres.default"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: flexibee.postgres.credentials.postgresql.acid.zalan.do
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flexibee.postgres.credentials.postgresql.acid.zalan.do
+                  key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: flexibee
+  name: flexibee
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5434
+      targetPort: 5434
+  selector:
+    app: flexibee
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: flexibee
+  name: flexibee
+  annotations:
+    traefik.ingress.kubernetes.io/response-header-timeout: "3000s"
+    traefik.ingress.kubernetes.io/timeout: "3000s"
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+  - host: flexibee.${DOMAIN}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: flexibee
+            port:
+              number: 5434
+  tls:
+    - secretName: flexibee-tls
+      hosts:
+        - flexibee.${DOMAIN}

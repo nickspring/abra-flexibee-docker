@@ -10,7 +10,9 @@ RUN echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb bullseye main" | te
 RUN apt-get update && apt-get install -y --fix-missing --no-install-recommends adoptopenjdk-8-hotspot adoptopenjdk-8-hotspot-jre
 
 RUN apt-get install -y locales locales-all
+RUN echo "cs_CZ.utf8 UTF-8" >> /etc/locale.gen
 RUN locale-gen cs_CZ.utf8 && update-locale
+ENV LC_ALL="cs_CZ.UTF-8"
 
 # Download latest flexibee
 RUN curl -o flexibee.deb "$(curl 'https://www.flexibee.eu/podpora/stazeni-flexibee/stazeni-ekonomickeho-systemu-flexibee-linux/' | egrep -o '(https:[^\"]+\.deb)' | grep -v 'client')"

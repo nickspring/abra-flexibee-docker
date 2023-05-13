@@ -18,6 +18,10 @@ After starting simple run Abra Flexibee and choose new data server:
 * host - localhost
 * port - 15434
 
+## Kuberenets
+
+To deploy Flexibee on Kubernetes, please see `manifests` folder.
+
 ## TODO
 
 * Add Nginx to docker-compose to server web version of Flexibee

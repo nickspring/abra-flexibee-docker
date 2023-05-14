@@ -49,6 +49,8 @@ spec:
       targetPort: 5434
   selector:
     app: flexibee
+  externalIPs:
+    - ${CLUSTER_IP}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

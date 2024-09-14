@@ -3,7 +3,7 @@ FROM --platform=linux/amd64 debian:11-slim
 ENV TZ="Europe/Prague"
 
 RUN apt-get update && apt-get install -y --fix-missing --no-install-recommends curl ca-certificates postgresql-13 \
-    postgresql-contrib-13 postgresql-client-common wget apt-transport-https gnupg supervisor expect
+    postgresql-contrib-13 postgresql-client-common wget apt-transport-https gnupg supervisor expect xdg-utils
 
 RUN wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | apt-key add -
 RUN echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
